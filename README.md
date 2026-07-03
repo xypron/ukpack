@@ -146,7 +146,7 @@ ukify = true
 ```
 This will:
 
-* add a build-dependency on `systemd-ukify` (which provides the `ukify` command),
+* add a build-dependency on `stubble` (which provides the `ukify.py` command),
 * build the kernel image into a UKI using the [UEFI stub] bundled with this release of
   ukpack for your target architecture, and
 * install that UKI in place of the plain kernel image in both the

@@ -249,7 +249,7 @@ class Config:
 
         ukify_arch = {x for x in self.arch if self.arch_override(x, "ukify")}
         if ukify_arch:
-            dep = "systemd-ukify"
+            dep = "stubble"
             if ukify_arch < self.arch:
                 dep += f" [{' '.join(sorted(ukify_arch))}]"
             self.env["pkg"]["image"]["Build-Depends-Arch"].append(dep)
