@@ -14,6 +14,7 @@ debian/linux-image-$(krel).stamp: vmlinux
 	      --output "debian/$(pkgname)$$kfile" \
 	      --efi-arch $(efiarch) \
 	      --stub '$(ukify)' \
+	      $(if $(machdb),--machdb '$(machdb)') \
 	      --uname $(krel) \
 	      --linux "$$image"
 	  chmod 0600 "debian/$(pkgname)$$kfile"

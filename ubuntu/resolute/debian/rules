@@ -52,6 +52,7 @@ vdso-install		:= $(vdso-install-$(DEB_HOST_ARCH))
 install-mod-strip	:= $(install-mod-strip-$(DEB_HOST_ARCH))
 force-compress-modules	:= $(force-compress-modules-$(DEB_HOST_ARCH))
 ukify			:= $(ukify-$(DEB_HOST_ARCH))
+machdb			:= $(machdb-$(DEB_HOST_ARCH))
 
 karch-i386	:= x86
 karch-x32	:= x86

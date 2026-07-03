@@ -428,6 +428,10 @@ class Config:
                     if val is True:
                         val = f"debian/linux{EFIARCH[arch]}.efi.stub"
                     dst.write(f"ukify-{arch} := {val}\n")
+                if val := self.arch_override(arch, "machdb"):
+                    if val is True:
+                        val = "machdb.txt"
+                    dst.write(f"machdb-{arch} := {val}\n")
 
             dst.write(f"flavour := {self.env['flavour']}\n")
             dst.write(f"krel := {self.env['krel']}\n")
