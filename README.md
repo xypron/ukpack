@@ -205,7 +205,69 @@ bundled into the UKI. Device-tree overlay files (`.dtbo`) listed there are *not*
 included, since `ukify`/`systemd-stub` do not support boot-time selection of overlays
 the way it does for base device trees.
 
+#### Add a model-to-compatible lookup table (machdb) to the UKI
+
+The [UEFI stub] bundled with ukpack (see above) selects which of the
+appended device trees to boot with by trying, in order: matching the
+`compatible` string of the firmware-provided device tree against the
+appended device trees, and - if that fails - matching hardware IDs derived
+from SMBIOS against a `--hwids` database. On some boards neither of these is
+enough because the firmware's device tree has a `compatible` string that
+doesn't match any of the appended device trees, and there are no useful
+SMBIOS hwids either. For these boards the stub can additionally look up the
+firmware device tree's `/model` property in a `machdb` lookup table to find
+the matching `compatible` string. You can have ukify bundle such a table
+into the UKI by passing it to `ukify build --machdb`.
+
+This is therefore only relevant for architectures that boot from a device
+tree (eg. `arm64`, `armhf`, `riscv64`) - it has no effect on architectures
+like `amd64` that don't use `--devicetree-auto`/`--machdb` in the first
+place, and even on those architectures it is only needed for the subset of
+boards where neither plain compatible-string nor hwid matching succeeds.
+
+Set the `machdb` key to `true` in the TOML footer to use a file called
+`machdb.txt`:
+```toml
+machdb = true
+```
+or set it to a path to use your own database file instead:
+```toml
+machdb = "/absolute/path/to/my-machdb.txt"
+```
+As with `ukify`, this value is passed unmodified to `ukify build --machdb`, so it
+must be reachable from the build environment; it is *not* resolved relative to the
+changelog/metadata file. Use an absolute path, or a path relative to the top of your
+kernel source tree since that's the directory `dpkg-buildpackage` is invoked from -
+this also applies to the default `machdb.txt` file used when `machdb = true`.
+
+The machdb file itself is a simple text format mapping one or more `Model:`
+values (matched against the firmware device tree's `/model` property) to a
+`Compatible:` value (which must match the `compatible` string of one of the
+device trees appended to the UKI):
+```
+Model: <model-string-1>
+Model: <model-string-2>
+Compatible: <compatible-string>
+
+Model: <model-string-3>
+Compatible: <another-compatible-string>
+```
+
+`machdb` only has an effect when `ukify` is also enabled for the same architecture,
+and like `ukify` and `config` it can be set per architecture:
+
+```toml
+arch = "arm64 riscv64"
+[arm64]
+ukify = true
+machdb = true
+[riscv64]
+ukify = "/path/to/my/riscv64-stub.efi"
+machdb = "/path/to/my/riscv64-machdb.txt"
+```
+
 ### Update your kernel
+
 
 To create a new version of your kernel,
 you can use the Debian `dch` tool to update the changelog/metadata file
