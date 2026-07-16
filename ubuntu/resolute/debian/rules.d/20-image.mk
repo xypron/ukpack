@@ -10,7 +10,7 @@ debian/linux-image-$(krel).stamp: vmlinux
 	  if [ -f 'arch/$(karch)/boot/dts/dtbs-list' ]; then
 	    sed '/\.dtb$$/bp;d;:p;i--devicetree-auto' 'arch/$(karch)/boot/dts/dtbs-list'
 	  fi | xargs -xt \
-	    ukify.py build \
+	    stubblify build \
 	      --output "debian/$(pkgname)$$kfile" \
 	      --efi-arch $(efiarch) \
 	      --stub '$(ukify)' \
